@@ -1,0 +1,24 @@
+.brand HSBC
+// Navigation
+nav.navbar.navbar-default(role='navigation')
+  .container
+    // Brand and toggle get grouped for better mobile display
+    .navbar-header
+      button.navbar-toggle(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a.navbar-brand(href='index.html') HSBC
+    #bs-example-navbar-collapse-1.collapse.navbar-collapse
+      ul.nav.navbar-nav
+        if sess != undefined || sess == ""
+          li
+            a(href='/compte/#{sess.login}') Profil
+          li
+            a(href='/deconnexion') Déconnexion 
+        else
+          li
+            a(href='/inscription') Inscription 
+          li
+            a(href='/connexion') Connexion

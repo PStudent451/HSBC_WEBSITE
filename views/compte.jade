@@ -1,0 +1,26 @@
+extends layout
+block content
+	.container-fluid
+		.box
+			.row()
+				.col-lg-12
+					hr 
+					h3(style="text-align : center;") Mes Informations
+					hr
+					form.col-lg-4.col-lg-offset-4(method='post', name='compteForm')
+						.form-group
+							label Prénom
+							input.form-control(type='text', placeholder='Prénom', name='firstname', id='firstname', value='#{data.firstname}') 
+						.form-group
+							label Nom
+							input.form-control(type='text', placeholder='Nom', name='lastname', id='lastname', value='#{data.lastname}') 
+						.form-group
+							label Date de naissance
+							input.form-control(type='date', name='birth', id='birthdate', value='#{birthdate}') 
+						.form-group
+							label E-mail
+							input.form-control(type='email', placeholder='E-mail', name='email', id='email', value='#{data.email}') 
+						if check
+							p Profil mis à jour
+						input.btn.btn-default(type='submit', value='Enregistrer')
+
