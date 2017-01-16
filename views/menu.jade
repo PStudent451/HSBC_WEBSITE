@@ -14,7 +14,7 @@ nav.navbar.navbar-default(role='navigation')
       ul.nav.navbar-nav
         if sess != undefined || sess == ""
           li
-            a(href='/compte/#{sess.login}') #{sess.login}
+            a(href='/compte/#{sess.login}') Profil
           li
             a(href='/deconnexion') Déconnexion 
         else
