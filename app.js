@@ -10,7 +10,6 @@ var connexion = require('./routes/connexion');
 var inscription = require('./routes/inscription');
 var deconnexion = require('./routes/deconnexion');
 var compte = require('./routes/compte');
-var profil = require('./routes/profil');
 
 var app = express();
 
@@ -34,7 +33,6 @@ app.use('/inscription', inscription);
 app.use('/deconnexion', deconnexion);
 
 app.use('/compte', compte);
-app.use('/profil', profil);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

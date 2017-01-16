@@ -5,36 +5,17 @@ var router = express.Router();
 
 var sess;
 
-/*router.get('/:log', function(req, res, next) {
+router.get('/:log', function(req, res, next) {
 	sess = req.session;
 	if ( sess.login != req.params.log ) {
 		res.redirect('/');
 	} else {
-
-		var docClient = new AWS.DynamoDB.DocumentClient();
-		var table = "Users";
-		var pseudo = sess.login;
-
-		var params = {
-		    TableName: table,
-		    Key:{
-		        "Pseudo": pseudo
-		    }
-		};
-
-		docClient.get(params, function(err, data) {
-			if (err) {
-				console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
-				res.redirect('/');
-			} else {
-				console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
-				res.render('compte', { sess: sess, data: data });
-			}
-		});
+		var birthdate = formatDate(sess.data.birthdate);
+		res.render('compte', { sess: sess, data: sess.data, birthdate: birthdate });
 	}
 });
 
-router.post('/:log', function(req, res, next) {
+/*router.post('/:log', function(req, res, next) {
 
 	sess = req.session;
 	if ( sess.login != req.params.log ) {
@@ -96,5 +77,14 @@ router.post('/:log', function(req, res, next) {
 
 	}
 });*/
+
+function formatDate(date) {
+	var birthdate = date.split('T')[0];
+	var day = Number(birthdate.substring(8));
+	var hour = Number(date.split('T')[1].split(':')[0]);
+	birthdate = birthdate.substring(0,8);
+	birthdate += (hour > 12) ? ++day : --day;
+	return birthdate;
+}
 
 module.exports = router;

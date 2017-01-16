@@ -20,14 +20,15 @@ router.post('/', function(req, res, next) {
     		if (isEmptyObject(data)) {							
 				console.log("Nom d'utilisateur inexistant");
 				res.render('connexion', {connected : false});
-			} else {									
+			} else {
 				if (req.body.password != data[0].password) {
 					console.log("Password erroné");
 					res.render('connexion', {connected : false});
 				} else {
 					console.log("Connecté : " + req.body.login);
 					sess.login = req.body.login;
-					res.render('profil', { sess: sess, data: data[0] });
+					sess.data = data[0];
+					res.redirect('/compte/' + sess.login);
 				}
 			}
     	})
