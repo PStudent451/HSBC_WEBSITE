@@ -1,10 +1,8 @@
 var express = require('express');
 var session = require('express-session');
-var AWS = require('aws-sdk');
 var router = express.Router();
-
-AWS.config.loadFromPath('./config.json');
-
+var dbConnector = require('../Helper/DatabaseConnector');
+var db = dbConnector.connection;
 var sess;
 
 
@@ -16,19 +14,16 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
 
 	sess = req.session;
+	db.one("select * from clients where Login=$1", req.body.login)
+    	.then(function (data) {
+	        res.render('profil', { sess: sess, data: data.Item });
+    	})
+	    .catch(function (error) {
+	    	console.log("ERROR:", error.message || error);
+	        res.render('connexion', {connected : false});
+	    });
 
-	var docClient = new AWS.DynamoDB.DocumentClient();
-
-	var table = "Users";
-	var pseudo = req.body.login;
-	var params = {
-		TableName: table,
-		Key:{
-			"Pseudo": pseudo
-		}
-	};
-
-	docClient.get(params, function(err, data) {	
+	/*docClient.get(params, function(err, data) {	
 		if (err) {
 			console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
 			res.render('connexion', {connected : false});
@@ -47,13 +42,13 @@ router.post('/', function(req, res, next) {
 					console.log("Connecté : " + req.body.login);
 					sess.login = req.body.login;
 					sess.type = data.Item.Type;
-					res.redirect('/');
+					res.redirect('/profil');
 
 				}
 			}
 		}
 	});
-
+*/
 });
 
 function isEmptyObject(obj) {

@@ -1,13 +1,11 @@
 var express = require('express');
 var session = require('express-session');
-var AWS = require('aws-sdk');
+var db = require('../Helper/DatabaseConnector')
 var router = express.Router();
-
-AWS.config.loadFromPath('./config.json');
 
 var sess;
 
-router.get('/:log', function(req, res, next) {
+/*router.get('/:log', function(req, res, next) {
 	sess = req.session;
 	if ( sess.login != req.params.log ) {
 		res.redirect('/');
@@ -97,6 +95,6 @@ router.post('/:log', function(req, res, next) {
 		});
 
 	}
-});
+});*/
 
 module.exports = router;

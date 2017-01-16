@@ -1,11 +1,11 @@
 var express = require('express');
 var session = require('express-session');
-var AWS = require('aws-sdk');
+
 var router = express.Router();
-
-AWS.config.loadFromPath('./config.json');
-
+var dbConnector = require('../Helper/DatabaseConnector');
+var db = dbConnector.connection;
 var sess;
+
 router.get('/', function(req, res, next) {
 	res.render('inscription');
 });
@@ -14,42 +14,36 @@ router.post('/', function(req, res, next) {
 
 	sess = req.session;
 
-	var docClient = new AWS.DynamoDB.DocumentClient();
-	var table = "Users";
-	var pseudo = req.body.login;
-	var password = req.body.password;
-	var email = req.body.email;
-	var type = req.body.type;
-	var gender = req.body.gender;
-	var firstname = req.body.firstname;
-	var lastname = req.body.lastname;
-	var birth = req.body.birth;
-	var phone = req.body.phone;
+	db.one("select * from clients where Login=$1", req.body.login)
+    .then(function (data) {
+    	//Si le nom d'utilisateur n'existe pas
+        if (!isEmptyObject(data)) {							
+			console.log("Utilisateur déjà existant");
+			res.render('inscription', { pseudo: true});
+		} else {
+			var values = [req.body.lastname, req.body.firstname, req.body.birth, req.body.email, req.body.login, req.body.password];
 
-	var paramsGet = {
-	    TableName: table,
-	    Key:{
-	        "Pseudo": pseudo
-	    }
-	};
+			db.one("insert into clients(Lastname, Firstname, Birthdate, Email, Login, Password) values($1, $2, $3, $4, $5, $6)", values)
+		    .then(function (data) {
+		        sess.login = req.body.login;
+				res.redirect('/connexion');
+		    })
+		    .catch(function (error) {
+		        console.log("ERROR:", error.message || error);
+				res.render('inscription', { field: true});
+		    });
+		}
+    })
+    .catch(function (error) {
+    	console.log("ERROR during :", error.message || error);
+        res.redirect('/');
+    });
 
-	var paramsAdd = {
-	    TableName: table,
-	    Item:{
-	        "Pseudo": pseudo,
-	        "Password": password,
-	        "Email": email,
-	        "Type": type,
-	        "Gender": gender,
-	        "Firstname": firstname,
-	        "Lastname": lastname,
-	        "Birth": birth,
-	        "Phone": phone
-	    }
-	};
+	
 
 
-	docClient.get(paramsGet, function(err, data) {
+
+	/*docClient.get(paramsGet, function(err, data) {
 		if (err) {
 			console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
 			res.redirect('/');
@@ -75,7 +69,7 @@ router.post('/', function(req, res, next) {
 				});
 			}
 		}
-	});
+	});*/
 
 });
 
